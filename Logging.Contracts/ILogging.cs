@@ -2,6 +2,7 @@
 {
     public interface ILogging
     {
-        void Log(string botName, string message);
+        void LogInfo(string botName, string message);
+        void LogError(string botName, string message);
     }
 }

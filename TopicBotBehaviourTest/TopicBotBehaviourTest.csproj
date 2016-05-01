@@ -59,6 +59,10 @@
       <Project>{8fb4b46a-c655-4f09-a6d2-68d7faf86b50}</Project>
       <Name>Configuration.Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Logging.Contracts\Logging.Contracts.csproj">
+      <Project>{B6612A42-0424-458F-8EF6-E0DAD2744BDF}</Project>
+      <Name>Logging.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Messaging.Contracts\Messaging.Contracts.csproj">
       <Project>{9a889aa4-0a88-476a-857f-25949d09c7e3}</Project>
       <Name>Messaging.Contracts</Name>

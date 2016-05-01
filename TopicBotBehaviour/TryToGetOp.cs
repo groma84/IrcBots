@@ -1,4 +1,5 @@
 ﻿using Configuration.Contracts;
+using Logging.Contracts;
 using Messaging.Contracts;
 using System;
 using System.Threading;
@@ -7,24 +8,33 @@ namespace TopicBotBehaviour
 {
     public class TryToGetOp
     {
+        private readonly ILogging _logging;
         private readonly ClientConfiguration _clientConfiguration;
         private readonly IMessagingClient _messageClient;
         private readonly TimeSpan _sleepTimeBetweenChecks;
 
-        public TryToGetOp(TimeSpan sleepTimeBetweenChecks, IMessagingClient messageClient, IConfiguration configuration)
+        public TryToGetOp(TimeSpan sleepTimeBetweenChecks, IMessagingClient messageClient, IConfiguration configuration, ILogging logging)
         {
             _sleepTimeBetweenChecks = sleepTimeBetweenChecks;
             _messageClient = messageClient;
             _clientConfiguration = configuration.LoadClientConfiguration();
+            _logging = logging;
         }
 
         public void CheckIfOpAndTryToGetOpIfNotLoop()
         {
             while (true)
             {
-                CheckIfOpAndTryToGetOpIfNotOnce();
+                try
+                {
+                    CheckIfOpAndTryToGetOpIfNotOnce();
 
-                Thread.Sleep(_sleepTimeBetweenChecks);
+                    Thread.Sleep(_sleepTimeBetweenChecks);
+                }
+                catch (Exception ex)
+                {
+                    _logging.LogError("TopicBot", "TopicBot->CheckIfOpAndTryToGetOpIfNotLoop:" + ex.Message + " -- " + ex.StackTrace + (ex.InnerException != null ? " Inner: " + ex.Message + " -- " + ex.StackTrace : string.Empty));
+                }
             }
         }
 

@@ -9,6 +9,7 @@ namespace TopicBot
 {
     public class TopicBot
     {
+
         public static void Main(string[] args)
         {
             Run();
@@ -20,7 +21,6 @@ namespace TopicBot
 
             while (true)
             {
-
                 try
                 {
                     Action<SimpleInjector.Container>[] botSpecificRegistrations = new Action<SimpleInjector.Container>[]
@@ -39,7 +39,7 @@ namespace TopicBot
 
                     client.Connect();
 
-                    StartOpGetterThread(client, configuration);
+                    StartOpGetterThread(client, configuration, logging);
 
                     client.StartToListen(); // blockierender Aufruf, der dann nur noch Events handled
 
@@ -47,21 +47,17 @@ namespace TopicBot
                 }
                 catch (Exception ex)
                 {
-                    if (logging != null)
-                    {
-                        logging.Log("TopicBot", ex.Message + " -- " + ex.StackTrace + (ex.InnerException != null ? " Inner: " + ex.Message + " -- " + ex.StackTrace : string.Empty));
-                    }
-
+                    logging.LogError("TopicBot", "TopicBot->Run:" + ex.Message + " -- " + ex.StackTrace + (ex.InnerException != null ? " Inner: " + ex.Message + " -- " + ex.StackTrace : string.Empty));
                     Thread.Sleep(300000); // 5 Minuten auf bessere Zeiten warten
                 }
             }
         }
 
-        private static void StartOpGetterThread(IMessagingClient client, IConfiguration configuration)
+        private static void StartOpGetterThread(IMessagingClient client, IConfiguration configuration, ILogging logging)
         {
             // Zusätzlichen Thread starten, der regelmäßig prüft, ob der TopicBot OP hat, und falls nicht, den Channel verlässt und neu beitritt, 
             // sobald er der einzige User im Channel ist (um so OP zu bekommen)
-            var opGetter = new TopicBotBehaviour.TryToGetOp(new TimeSpan(0, 3, 0), client, configuration);
+            var opGetter = new TopicBotBehaviour.TryToGetOp(new TimeSpan(0, 3, 0), client, configuration, logging);
             new Thread(new ThreadStart(opGetter.CheckIfOpAndTryToGetOpIfNotLoop)).Start();
         }
 

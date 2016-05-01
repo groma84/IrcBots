@@ -1,7 +1,5 @@
 # TODO
 ## NEXT
-
-- Logging einfügen
 - TopicBot in WindowsService verpacken
 
 
@@ -19,3 +17,4 @@
 ###v0.1.0
 - Umstellen auf paket
 - Umstellen auf Moq statt eigener Mocks
+- EventLog-Logging einfügen

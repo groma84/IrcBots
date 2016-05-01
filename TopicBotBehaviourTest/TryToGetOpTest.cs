@@ -1,4 +1,5 @@
 ﻿using Configuration.Contracts;
+using Logging.Contracts;
 using Messaging.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -16,6 +17,7 @@ namespace TopicBotBehaviourTest
         ClientConfiguration _clientConfiguration = new ClientConfiguration("testserver", 6667, "testBot", "testChannel");
         private Mock<IMessagingClient> _messagingClientMock;
         private Mock<IConfiguration> _configurationMock;
+        private Mock<ILogging> _loggingMock;
 
         [TestInitialize]
         public void TestInitialize()
@@ -29,7 +31,9 @@ namespace TopicBotBehaviourTest
             _configurationMock = new Mock<IConfiguration>();
             _configurationMock.Setup(mock => mock.LoadClientConfiguration()).Returns(_clientConfiguration);
 
-            _tryToGetOp = new TryToGetOp(new TimeSpan(1000), _messagingClientMock.Object, _configurationMock.Object);
+            _loggingMock = new Mock<ILogging>();
+
+            _tryToGetOp = new TryToGetOp(new TimeSpan(1000), _messagingClientMock.Object, _configurationMock.Object, _loggingMock.Object);
         }
 
         [TestCleanup]

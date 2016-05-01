@@ -12,39 +12,27 @@ namespace Logging
 {
     public class Logging : ILogging
     {
-        private readonly Dictionary<string, ILogger> _loggers;
-        private readonly string _logDirectoryName;
+        private readonly ILogger _logger;
 
         public Logging()
         {
-            _logDirectoryName = Path.Combine(Path.GetTempPath(), @"IrcBotService");
-            if (!Directory.Exists(_logDirectoryName))
-            {
-                Directory.CreateDirectory(_logDirectoryName);
-            }
-
-            _loggers = new Dictionary<string, ILogger>();
-        }
-
-        void ILogging.Log(string botName, string message)
-        {
-            CreateLoggerIfNotExists(botName);
-
-            _loggers[botName].Information(message);
-        }
-
-        private void CreateLoggerIfNotExists(string botName)
-        {
-            if (!_loggers.ContainsKey(botName))
-            {
-                var filePath = Path.Combine(_logDirectoryName, botName + "_{Date}.txt");
-                var newLogger = new LoggerConfiguration()
+            _logger = new LoggerConfiguration()
                     .MinimumLevel.Debug()
-                            .WriteTo.RollingFile(filePath, LogEventLevel.Debug, retainedFileCountLimit: 8, fileSizeLimitBytes: null)
+                    .WriteTo.ColoredConsole()
+#if RELEASE
+                    .WriteTo.EventLog("IWIrcBots", "IWIrcBots", restrictedToMinimumLevel: LogEventLevel.Warning)
+#endif
                             .CreateLogger();
+        }
 
-                _loggers[botName] = newLogger;
-            }
+        void ILogging.LogInfo(string botName, string message)
+        {
+            _logger.Information(message);
+        }
+
+        void ILogging.LogError(string botName, string message)
+        {
+            _logger.Error(message);
         }
     }
 }
