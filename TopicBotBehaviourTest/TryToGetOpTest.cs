@@ -1,7 +1,7 @@
 ﻿using Configuration.Contracts;
 using Messaging.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Mocks;
+using Moq;
 using System;
 using TopicBotBehaviour;
 
@@ -11,11 +11,11 @@ namespace TopicBotBehaviourTest
     public class TryToGetOpTest
     {
         private TryToGetOp _tryToGetOp;
-        private MessagingClientMock _messagingClientMock;
-        private ConfigurationMock _configurationMock;
 
         MessageData _messageData;
         ClientConfiguration _clientConfiguration = new ClientConfiguration("testserver", 6667, "testBot", "testChannel");
+        private Mock<IMessagingClient> _messagingClientMock;
+        private Mock<IConfiguration> _configurationMock;
 
         [TestInitialize]
         public void TestInitialize()
@@ -24,12 +24,12 @@ namespace TopicBotBehaviourTest
 
             _messageData = new MessageData("TestRunner", "testChannel", "!topic newTopic", new String[] { "!topic", "newTopic" });
 
-            _messagingClientMock = new MessagingClientMock();
+            _messagingClientMock = new Mock<IMessagingClient>();
 
-            _configurationMock = new ConfigurationMock();
-            _configurationMock.LoadClientConfiguration = _clientConfiguration;
+            _configurationMock = new Mock<IConfiguration>();
+            _configurationMock.Setup(mock => mock.LoadClientConfiguration()).Returns(_clientConfiguration);
 
-            _tryToGetOp = new TryToGetOp(new TimeSpan(1000), _messagingClientMock, _configurationMock);
+            _tryToGetOp = new TryToGetOp(new TimeSpan(1000), _messagingClientMock.Object, _configurationMock.Object);
         }
 
         [TestCleanup]
@@ -43,52 +43,51 @@ namespace TopicBotBehaviourTest
         [TestMethod]
         public void TryToGetOpTest_NotConnectedYet_DoNothing()
         {
-            _messagingClientMock.AmIChannelAdmin.Add(_clientConfiguration.Channel, null);
+            _messagingClientMock.Setup(mock => mock.AmIChannelAdmin(It.Is<string>(a => a == _clientConfiguration.Channel))).Returns((bool?)null);
 
             _tryToGetOp.CheckIfOpAndTryToGetOpIfNotOnce();
 
-            Assert.IsFalse(_messagingClientMock.CountUsersInChannelCalls.ContainsKey(_clientConfiguration.Channel));
-            Assert.IsFalse(_messagingClientMock.LeaveChannelCalls.ContainsKey(_clientConfiguration.Channel));
-            Assert.IsFalse(_messagingClientMock.JoinChannelCalls.ContainsKey(_clientConfiguration.Channel));
+            _messagingClientMock.Verify(mock => mock.CountUsersInChannel(It.Is<string>(p => p == _clientConfiguration.Channel)), Times.Never);
+            _messagingClientMock.Verify(mock => mock.LeaveChannel(It.Is<string>(p => p == _clientConfiguration.Channel)), Times.Never);
+            _messagingClientMock.Verify(mock => mock.JoinChannel(It.Is<string>(p => p == _clientConfiguration.Channel)), Times.Never);
         }
 
         [TestMethod]
         public void TryToGetOpTest_AlreadyOp_DoNothing()
         {
-            _messagingClientMock.AmIChannelAdmin.Add(_clientConfiguration.Channel, true);
+            _messagingClientMock.Setup(mock => mock.AmIChannelAdmin(It.Is<string>(a => a == _clientConfiguration.Channel))).Returns(true);
 
             _tryToGetOp.CheckIfOpAndTryToGetOpIfNotOnce();
 
-            Assert.IsFalse(_messagingClientMock.CountUsersInChannelCalls.ContainsKey(_clientConfiguration.Channel));
-            Assert.IsFalse(_messagingClientMock.LeaveChannelCalls.ContainsKey(_clientConfiguration.Channel));
-            Assert.IsFalse(_messagingClientMock.JoinChannelCalls.ContainsKey(_clientConfiguration.Channel));
+            _messagingClientMock.Verify(mock => mock.CountUsersInChannel(It.Is<string>(p => p == _clientConfiguration.Channel)), Times.Never);
+            _messagingClientMock.Verify(mock => mock.LeaveChannel(It.Is<string>(p => p == _clientConfiguration.Channel)), Times.Never);
+            _messagingClientMock.Verify(mock => mock.JoinChannel(It.Is<string>(p => p == _clientConfiguration.Channel)), Times.Never);
         }
 
         [TestMethod]
         public void TryToGetOpTest_NotOpAndOnlyUser_RejoinChannel()
         {
-            _messagingClientMock.AmIChannelAdmin.Add(_clientConfiguration.Channel, false);
-            _messagingClientMock.CountUsersInChannel.Add(_clientConfiguration.Channel, 1);
+            _messagingClientMock.Setup(mock => mock.AmIChannelAdmin(It.Is<string>(a => a == _clientConfiguration.Channel))).Returns(false);
+            _messagingClientMock.Setup(mock => mock.CountUsersInChannel(It.Is<string>(a => a == _clientConfiguration.Channel))).Returns(1);
 
             _tryToGetOp.CheckIfOpAndTryToGetOpIfNotOnce();
 
-            Assert.AreEqual(1, _messagingClientMock.CountUsersInChannelCalls[_clientConfiguration.Channel]);
-            Assert.AreEqual(1, _messagingClientMock.LeaveChannelCalls[_clientConfiguration.Channel]);
-            Assert.AreEqual(1, _messagingClientMock.JoinChannelCalls[_clientConfiguration.Channel]);
-
+            _messagingClientMock.Verify(mock => mock.CountUsersInChannel(It.Is<string>(p => p == _clientConfiguration.Channel)), Times.Once);
+            _messagingClientMock.Verify(mock => mock.LeaveChannel(It.Is<string>(p => p == _clientConfiguration.Channel)), Times.Once);
+            _messagingClientMock.Verify(mock => mock.JoinChannel(It.Is<string>(p => p == _clientConfiguration.Channel)), Times.Once);
         }
 
         [TestMethod]
         public void TryToGetOpTest_NotOpAndOtherUsersPresent_DoNothing()
         {
-            _messagingClientMock.AmIChannelAdmin.Add(_clientConfiguration.Channel, false);
-            _messagingClientMock.CountUsersInChannel.Add(_clientConfiguration.Channel, 42);
+            _messagingClientMock.Setup(mock => mock.AmIChannelAdmin(It.Is<string>(a => a == _clientConfiguration.Channel))).Returns(false);
+            _messagingClientMock.Setup(mock => mock.CountUsersInChannel(It.Is<string>(a => a == _clientConfiguration.Channel))).Returns(42);
 
             _tryToGetOp.CheckIfOpAndTryToGetOpIfNotOnce();
 
-            Assert.AreEqual(1, _messagingClientMock.CountUsersInChannelCalls[_clientConfiguration.Channel]);
-            Assert.IsFalse(_messagingClientMock.LeaveChannelCalls.ContainsKey(_clientConfiguration.Channel));
-            Assert.IsFalse(_messagingClientMock.JoinChannelCalls.ContainsKey(_clientConfiguration.Channel));
+            _messagingClientMock.Verify(mock => mock.CountUsersInChannel(It.Is<string>(p => p == _clientConfiguration.Channel)), Times.Once);
+            _messagingClientMock.Verify(mock => mock.LeaveChannel(It.Is<string>(p => p == _clientConfiguration.Channel)), Times.Never);
+            _messagingClientMock.Verify(mock => mock.JoinChannel(It.Is<string>(p => p == _clientConfiguration.Channel)), Times.Never);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace DIMappings.CrossCutting
     {
         void IInitializeMapping.Init(SimpleInjector.Container container)
         {
-            container.RegisterSingle<IConfiguration, HardcodedConfiguration>();
+            container.RegisterSingleton<IConfiguration, HardcodedConfiguration>();
         }
     }
 }

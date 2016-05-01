@@ -1,6 +1,6 @@
 ﻿using Messaging.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Mocks;
+using Moq;
 using System;
 using System.Linq;
 using TopicBotBehaviour;
@@ -11,7 +11,7 @@ namespace TopicBotBehaviourTest
     public class ChannelMessageActionsTest
     {
         private ChannelMessageActions _channelMessageActions;
-        private MessagingClientMock _messagingClientMock;
+        private Mock<IMessagingClient> _messagingClientMock;
 
         MessageData _messageData;
 
@@ -22,9 +22,9 @@ namespace TopicBotBehaviourTest
 
             _messageData = new MessageData("TestRunner", "testChannel", "!topic newTopic", new String[] { "!topic", "newTopic" });
 
-            _messagingClientMock = new MessagingClientMock();
+            _messagingClientMock = new Mock<IMessagingClient>();
 
-            _channelMessageActions = new ChannelMessageActions(_messagingClientMock);
+            _channelMessageActions = new ChannelMessageActions(_messagingClientMock.Object);
         }
 
         [TestCleanup]
@@ -39,58 +39,47 @@ namespace TopicBotBehaviourTest
         {
             _messageData = new MessageData(String.Empty, "testChannel", "BANANAAAA!", new String[] { "BANANAAAA!" });
 
-            _messagingClientMock.AmIChannelAdmin.Add(_messageData.Channel, false);
+            _messagingClientMock.Setup(mock => mock.AmIChannelAdmin(It.Is<string>(a => a == _messageData.Channel))).Returns(false);
 
-            Assert.AreEqual(0, _messagingClientMock.AmIChannelAdminCalls.Count);
-            Assert.AreEqual(0, _messagingClientMock.SendMessageCalls.Count);
-            Assert.AreEqual(0, _messagingClientMock.ChangeTopicCalls.Count);
+            _messagingClientMock.Verify(mock => mock.AmIChannelAdmin(It.Is<string>(a => a == _messageData.Channel)), Times.Never);
+            _messagingClientMock.Verify(mock => mock.SendMessage(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            _messagingClientMock.Verify(mock => mock.ChangeTopic(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
 
             _channelMessageActions.ChangeTopic(_messageData);
 
-            Assert.AreEqual(0, _messagingClientMock.AmIChannelAdminCalls.Count);
-            Assert.AreEqual(0, _messagingClientMock.SendMessageCalls.Count);
-            Assert.AreEqual(0, _messagingClientMock.ChangeTopicCalls.Count);
+            _messagingClientMock.Verify(mock => mock.AmIChannelAdmin(It.IsAny<string>()), Times.Never);
+            _messagingClientMock.Verify(mock => mock.SendMessage(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            _messagingClientMock.Verify(mock => mock.ChangeTopic(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
         [TestMethod]
         public void ChannelMessageActionsTest_ChangeTopic_NotOp_MessageSentToChannel()
         {
-            _messagingClientMock.AmIChannelAdmin.Add(_messageData.Channel, false);
+            _messagingClientMock.Setup(mock => mock.AmIChannelAdmin(It.Is<string>(a => a == _messageData.Channel))).Returns(false);
 
-            Assert.AreEqual(0, _messagingClientMock.AmIChannelAdminCalls.Count);
-            Assert.AreEqual(0, _messagingClientMock.SendMessageCalls.Count);
+            _messagingClientMock.Verify(mock => mock.AmIChannelAdmin(It.IsAny<string>()), Times.Never);
+            _messagingClientMock.Verify(mock => mock.SendMessage(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
 
             _channelMessageActions.ChangeTopic(_messageData);
 
-            Assert.AreEqual(1, _messagingClientMock.AmIChannelAdminCalls.Count);
-            Assert.AreEqual(_messageData.Channel, _messagingClientMock.AmIChannelAdminCalls.First());
-
-            Assert.AreEqual(1, _messagingClientMock.SendMessageCalls.Count);
-            Assert.AreEqual(_messageData.Channel, _messagingClientMock.SendMessageCalls.First().Item1);
-            Assert.IsFalse(string.IsNullOrEmpty(_messagingClientMock.SendMessageCalls.First().Item2));
-
-            Assert.AreEqual(0, _messagingClientMock.ChangeTopicCalls.Count);
-
+            _messagingClientMock.Verify(mock => mock.AmIChannelAdmin(It.Is<string>(a => a == _messageData.Channel)), Times.Once);
+            _messagingClientMock.Verify(mock => mock.SendMessage(It.Is<string>(p => p == _messageData.Channel), It.Is<string>(p => !string.IsNullOrEmpty(p))), Times.Once);
+            _messagingClientMock.Verify(mock => mock.ChangeTopic(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
         [TestMethod]
         public void ChannelMessageActionsTest_ChangeTopic_Op_NewTopicSet()
         {
-            _messagingClientMock.AmIChannelAdmin.Add(_messageData.Channel, true);
+            _messagingClientMock.Setup(mock => mock.AmIChannelAdmin(It.Is<string>(a => a == _messageData.Channel))).Returns(true);
 
-            Assert.AreEqual(0, _messagingClientMock.AmIChannelAdminCalls.Count);
-            Assert.AreEqual(0, _messagingClientMock.ChangeTopicCalls.Count);
+            _messagingClientMock.Verify(mock => mock.AmIChannelAdmin(It.IsAny<string>()), Times.Never);
+            _messagingClientMock.Verify(mock => mock.ChangeTopic(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
 
             _channelMessageActions.ChangeTopic(_messageData);
 
-            Assert.AreEqual(1, _messagingClientMock.AmIChannelAdminCalls.Count);
-            Assert.AreEqual(_messageData.Channel, _messagingClientMock.AmIChannelAdminCalls.First());
-
-            Assert.AreEqual(1, _messagingClientMock.ChangeTopicCalls.Count);
-            Assert.AreEqual(_messageData.Channel, _messagingClientMock.ChangeTopicCalls.First().Item1);
-            Assert.AreEqual("newTopic [TestRunner]", _messagingClientMock.ChangeTopicCalls.First().Item2);
-
-            Assert.AreEqual(0, _messagingClientMock.SendMessageCalls.Count);
+            _messagingClientMock.Verify(mock => mock.AmIChannelAdmin(It.Is<string>(a => a == _messageData.Channel)), Times.Once);
+            _messagingClientMock.Verify(mock => mock.ChangeTopic(It.Is<string>(a => a == _messageData.Channel), It.Is<string>(p => p == "newTopic [TestRunner]")), Times.Once);
+            _messagingClientMock.Verify(mock => mock.SendMessage(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
     }
 }

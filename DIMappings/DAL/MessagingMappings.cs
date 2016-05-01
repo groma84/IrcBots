@@ -7,7 +7,7 @@ namespace DIMappings.DAL
     {
         void IInitializeMapping.Init(SimpleInjector.Container container)
         {
-            container.RegisterSingle<IMessagingClient, IrcMessagingClient>();
+            container.RegisterSingleton<IMessagingClient, IrcMessagingClient>();
         }
     }
 }
