@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -44,11 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IrcBotService.cs">
+    <Compile Include="IrcBotServiceInstall.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="IrcBotService.Designer.cs">
-      <DependentUpon>IrcBotService.cs</DependentUpon>
+    <Compile Include="IrcBotServiceInstall.Designer.cs">
+      <DependentUpon>IrcBotServiceInstall.cs</DependentUpon>
     </Compile>
     <Compile Include="IrcBotServiceStarter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,8 +64,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="IrcBotService.resx">
-      <DependentUpon>IrcBotService.cs</DependentUpon>
+    <EmbeddedResource Include="IrcBotServiceInstall.resx">
+      <DependentUpon>IrcBotServiceInstall.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

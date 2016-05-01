@@ -1,4 +1,7 @@
-﻿using System.ServiceProcess;
+﻿using System;
+using System.Configuration.Install;
+using System.Reflection;
+using System.ServiceProcess;
 
 namespace IrcBotService
 {
@@ -7,14 +10,39 @@ namespace IrcBotService
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        static void Main()
+        static void Main(string[] args)
         {
-            ServiceBase[] ServicesToRun;
-            ServicesToRun = new ServiceBase[]
+            if (System.Environment.UserInteractive)
             {
-                new IrcBotService()
-            };
-            ServiceBase.Run(ServicesToRun);
+                try
+                {
+                    string parameter = string.Concat(args);
+                    switch (parameter)
+                    {
+                        case "--install":
+                            ManagedInstallerClass.InstallHelper(new string[] { Assembly.GetExecutingAssembly().Location });
+                            Console.WriteLine("install");
+                            break;
+                        case "--uninstall":
+                            ManagedInstallerClass.InstallHelper(new string[] { "/u", Assembly.GetExecutingAssembly().Location });
+                            Console.WriteLine("uninstall");
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Fehler: " + ex);
+                }
+            }
+            else
+            {
+                ServiceBase[] ServicesToRun;
+                ServicesToRun = new ServiceBase[]
+                {
+                    new IrcBotServiceInstall()
+                };
+                ServiceBase.Run(ServicesToRun);
+            }
         }
     }
 }
