@@ -1,44 +1,54 @@
-﻿using System.ServiceProcess;
+﻿using System;
+using System.Configuration.Install;
+using System.Reflection;
+using System.ServiceProcess;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace IrcBotService
 {
-    public partial class IrcBotService : ServiceBase
+    static class IrcBotService
     {
-        public IrcBotService()
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        static void Main(string[] args)
         {
-            InitializeComponent();
-        }
-
-        protected override void OnStart(string[] args)
-        {
-            var botRunnerThread = new Thread(new ThreadStart(BotRunner));
-            botRunnerThread.Start();
-        }
-
-        protected override void OnStop()
-        {
-        }
-
-        private void BotRunner()
-        {
-            var topicBotTask = Task.Run(() =>
+            if (System.Environment.UserInteractive)
             {
-                TopicBot.TopicBot.Run();
-            });
-
-            var botTasks = new[]
-            {
-                topicBotTask
-            };
-
-            foreach (var t in botTasks)
-            {
-                t.Start();
+                try
+                {
+                    string parameter = string.Concat(args);
+                    switch (parameter)
+                    {
+                        case "--install":
+                            ManagedInstallerClass.InstallHelper(new string[] { Assembly.GetExecutingAssembly().Location });
+                            Console.WriteLine("installed");
+                            break;
+                        case "--uninstall":
+                            ManagedInstallerClass.InstallHelper(new string[] { "/u", Assembly.GetExecutingAssembly().Location });
+                            Console.WriteLine("uninstalled");
+                            break;
+                        case "--debug":
+                            var botRunnerThread = new Thread(new ThreadStart(new IrcBotServiceRun().BotRunner));
+                            botRunnerThread.Start();
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Fehler: " + ex);
+                }
             }
+            else
+            {
+                ServiceBase[] ServicesToRun;
+                ServicesToRun = new ServiceBase[]
+                {
+                    new IrcBotServiceRun()
+                };
 
-            Task.WaitAll(botTasks);
+                ServiceBase.Run(ServicesToRun);
+            }
         }
     }
 }

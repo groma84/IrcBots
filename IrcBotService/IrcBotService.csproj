@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3D579985-4E6D-413F-9331-D619FA914548}</ProjectGuid>
+    <ProjectGuid>{7E5CDC8E-BE20-4467-B1FB-FB3F0D458B2E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IrcBotService</RootNamespace>
@@ -12,6 +12,11 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -22,6 +27,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -34,8 +40,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,28 +54,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IrcBotServiceInstall.cs">
+    <Compile Include="IrcBotServiceInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="IrcBotServiceInstall.Designer.cs">
-      <DependentUpon>IrcBotServiceInstall.cs</DependentUpon>
+    <Compile Include="IrcBotServiceInstaller.Designer.cs">
+      <DependentUpon>IrcBotServiceInstaller.cs</DependentUpon>
     </Compile>
-    <Compile Include="IrcBotServiceStarter.cs" />
+    <Compile Include="IrcBotServiceRun.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="IrcBotServiceRun.Designer.cs">
+      <DependentUpon>IrcBotServiceRun.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IrcBotService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="IrcBotServiceInstaller.resx">
+      <DependentUpon>IrcBotServiceInstaller.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\TopicBot\TopicBot.csproj">
       <Project>{1f3eaaad-02ad-440c-b3fe-06b0907c7aed}</Project>
       <Name>TopicBot</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="IrcBotServiceInstall.resx">
-      <DependentUpon>IrcBotServiceInstall.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

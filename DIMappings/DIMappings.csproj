@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DIMappings</RootNamespace>
     <AssemblyName>DIMappings</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Container.cs" />
-    <Compile Include="CrossCutting\ConfigurationMappings.cs" />
+    <Compile Include="CrossCuttingMappings.cs" />
     <Compile Include="DAL\MessagingMappings.cs" />
     <Compile Include="IInitializeMapping.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -59,6 +60,14 @@
       <Project>{351af35a-9932-4e82-b47b-9efa9917b70f}</Project>
       <Name>IrcMessaging</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Logging.Contracts\Logging.Contracts.csproj">
+      <Project>{B6612A42-0424-458F-8EF6-E0DAD2744BDF}</Project>
+      <Name>Logging.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logging\Logging.csproj">
+      <Project>{9176d03f-3f50-4e7a-bf2f-c44ecb6d3092}</Project>
+      <Name>Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Messaging.Contracts\Messaging.Contracts.csproj">
       <Project>{9a889aa4-0a88-476a-857f-25949d09c7e3}</Project>
       <Name>Messaging.Contracts</Name>
@@ -66,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="BLL\" />
+    <Folder Include="CrossCutting\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />

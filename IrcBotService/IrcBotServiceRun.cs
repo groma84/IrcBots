@@ -1,12 +1,14 @@
-﻿using System.ServiceProcess;
+﻿using System;
+using System.IO;
+using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace IrcBotService
 {
-    public partial class IrcBotServiceInstall : ServiceBase
+    public partial class IrcBotServiceRun : ServiceBase
     {
-        public IrcBotServiceInstall()
+        public IrcBotServiceRun()
         {
             InitializeComponent();
         }
@@ -21,7 +23,7 @@ namespace IrcBotService
         {
         }
 
-        private void BotRunner()
+        public void BotRunner()
         {
             var topicBotTask = Task.Run(() =>
             {
@@ -32,11 +34,6 @@ namespace IrcBotService
             {
                 topicBotTask
             };
-
-            foreach (var t in botTasks)
-            {
-                t.Start();
-            }
 
             Task.WaitAll(botTasks);
         }

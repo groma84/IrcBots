@@ -45,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging", "Logging\Logging.csproj", "{9176D03F-3F50-4E7A-BF2F-C44ECB6D3092}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IrcBotService", "IrcBotService\IrcBotService.csproj", "{7E5CDC8E-BE20-4467-B1FB-FB3F0D458B2E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,10 @@ Global
 		{9176D03F-3F50-4E7A-BF2F-C44ECB6D3092}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9176D03F-3F50-4E7A-BF2F-C44ECB6D3092}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9176D03F-3F50-4E7A-BF2F-C44ECB6D3092}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E5CDC8E-BE20-4467-B1FB-FB3F0D458B2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E5CDC8E-BE20-4467-B1FB-FB3F0D458B2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E5CDC8E-BE20-4467-B1FB-FB3F0D458B2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E5CDC8E-BE20-4467-B1FB-FB3F0D458B2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -110,6 +116,7 @@ Global
 		{39034B5B-1385-47AA-B0E1-353B19EE736F} = {44C98CFF-FCC2-4CEE-8919-50ACC8DDC125}
 		{82B05F0B-C0D2-4908-AB0E-1D5E57FC4673} = {44C98CFF-FCC2-4CEE-8919-50ACC8DDC125}
 		{9176D03F-3F50-4E7A-BF2F-C44ECB6D3092} = {C67B7F33-18A1-4E63-8EEF-5E97D0F6AF33}
+		{7E5CDC8E-BE20-4467-B1FB-FB3F0D458B2E} = {523D9B70-5AC5-40D0-AEC5-E62CF840A187}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		VD_Solution = <?xml version="1.0" encoding="utf-16"?>|§r|§n<DocumentsSolution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">|§r|§n  <m_persistedPinnedDocumentGroupLabels />|§r|§n</DocumentsSolution>

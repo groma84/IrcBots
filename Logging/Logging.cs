@@ -20,7 +20,7 @@ namespace Logging
                     .MinimumLevel.Debug()
                     .WriteTo.ColoredConsole()
 #if RELEASE
-                    .WriteTo.EventLog("IWIrcBots", "IWIrcBots", restrictedToMinimumLevel: LogEventLevel.Warning)
+                    .WriteTo.EventLog("IrcBotService", "IrcBotService", restrictedToMinimumLevel: LogEventLevel.Warning)
 #endif
                             .CreateLogger();
         }

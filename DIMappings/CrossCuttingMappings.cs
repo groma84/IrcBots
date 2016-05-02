@@ -1,12 +1,14 @@
 ﻿using Configuration.Contracts;
 using Configuration;
+using Logging.Contracts;
 
-namespace DIMappings.CrossCutting
+namespace DIMappings
 {
-    public class ConfigurationMappings : IInitializeMapping
+    public class CrossCuttingMappings : IInitializeMapping
     {
         void IInitializeMapping.Init(SimpleInjector.Container container)
         {
+            container.RegisterSingleton<ILogging, Logging.Logging>();
             container.RegisterSingleton<IConfiguration, HardcodedConfiguration>();
         }
     }

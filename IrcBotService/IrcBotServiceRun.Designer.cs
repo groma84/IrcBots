@@ -1,6 +1,6 @@
 ﻿namespace IrcBotService
 {
-    partial class IrcBotServiceInstall
+    partial class IrcBotServiceRun
     {
         /// <summary> 
         /// Required designer variable.
@@ -10,7 +10,7 @@
         /// <summary>
         /// Clean up any resources being used.
         /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        /// <param name="disposing">True if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -28,11 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            // 
-            // IrcBotServiceInstall
-            // 
+            components = new System.ComponentModel.Container();
             this.ServiceName = "Service1";
-
         }
 
         #endregion

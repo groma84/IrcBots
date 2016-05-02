@@ -39,7 +39,7 @@ namespace DIMappings
 
         private static void InitCrossCutting(SimpleInjector.Container container)
         {
-            (new CrossCutting.ConfigurationMappings() as IInitializeMapping).Init(container);
+            (new CrossCuttingMappings() as IInitializeMapping).Init(container);
         }
 
         private static void InitDAL(SimpleInjector.Container container)
